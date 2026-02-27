@@ -1,0 +1,25 @@
+{
+    "name": "upgrade-checker",
+    "description": "Onchain checker library for Solidity proxy contract upgrades",
+    "keywords": [
+        "ethereum",
+        "solidity",
+        "smart",
+        "contracts",
+        "library",
+        "security"
+    ],
+    "license": "MIT",
+    "devDependencies": {
+        "@nomicfoundation/hardhat-toolbox": "6.1.0",
+        "@openzeppelin/hardhat-upgrades": "3.9.1",
+        "hardhat-contract-sizer": "2.10.1",
+        "hardhat-gas-reporter": "2.3.0",
+        "hardhat": "2.28.0",
+        "dotenv": "16.4.5"
+    },
+    "dependencies": {
+        "@openzeppelin/contracts": "5.6.0",
+        "@openzeppelin/contracts-upgradeable": "5.6.0"
+    }
+}

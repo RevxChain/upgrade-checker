@@ -1,1 +1,1 @@
-# upgrade-checker
+# Upgrade checker
