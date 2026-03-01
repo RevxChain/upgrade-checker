@@ -1,0 +1,12 @@
+{
+    "detectors_to_run": "all",
+    "detectors_to_exclude": "locked-ether",
+    "exclude_dependencies": true,
+    "exclude_informational": true,
+    "exclude_optimization": true,
+    "fail_on": "high",
+    "disable_color": true,
+    "filter_paths": "contracts/mocks|contracts/proxies",
+    "include_paths": "contracts/",
+    "skip_assembly": true
+}

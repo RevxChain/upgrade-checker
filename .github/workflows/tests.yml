@@ -1,0 +1,22 @@
+name: tests
+on: 
+    - push
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v6
+          - name: Set up environment
+            uses: ./.github/actions/setup
+          - name: Run tests
+            run: npx hardhat test
+          - name: Run coverage
+            run: npx hardhat coverage
+          - name: Check coverage
+            run: npx istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100
+          - name: Run Slither
+            uses: crytic/slither-action@v0.4.2
+            with:
+              solc-version: 0.8.34
+              node-version: 22.17
+              fail-on: config

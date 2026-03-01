@@ -52,6 +52,7 @@ library InterfaceIdsRegistry {
         return $._interfaceIds.values();
     }
 
+    //slither-disable-next-line uninitialized-storage
     function _getInterfaceIdsRegistryStorage() private pure returns(InterfaceIdsRegistryStorage storage $) {
         assembly {
             $.slot := INTERFACE_IDS_REGISTRY_STORAGE_LOCATION
