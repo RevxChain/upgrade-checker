@@ -32,12 +32,6 @@ library InterfaceIdsRegistry {
     bytes32 private constant INTERFACE_IDS_REGISTRY_STORAGE_LOCATION = 0xb3567140b780d0e6eae18a93d996909c6c854e99daead678dce9f5547099f300;
 
     /**
-     * @notice Raised when attempting to register or unregister the invalid interface ID.
-     * @dev The value 0xffffffff is reserved for ERC165 "no interface" and cannot be used.
-     */
-    error InterfaceIdsRegistry__InvalidInterfaceId();
-
-    /**
      * @notice Emitted when interface validation is enabled or disabled.
      * @param isEnabled {true} if validation is enabled, {false} if disabled.
      */
@@ -49,7 +43,13 @@ library InterfaceIdsRegistry {
      * @param isAdded {true} if the interface was added, {false} if removed.
      */
     event InterfaceIdSet(bytes4 interfaceId, bool indexed isAdded);
-    
+
+    /**
+     * @notice Raised when attempting to register or unregister the invalid interface ID.
+     * @dev The value 0xffffffff is reserved for ERC165 "no interface" and cannot be used.
+     */
+    error InterfaceIdsRegistry__InvalidInterfaceId();
+
     /**
      * @notice Enables or disables interface validation for upgrades.
      * @dev When disabled ({enable} = false), implementations won't have their interfaces checked.
