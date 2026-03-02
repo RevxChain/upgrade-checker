@@ -10,6 +10,8 @@ A Solidity library for validating proxy contract upgrades with runtime integrity
 [![Hardhat](https://img.shields.io/badge/Hardhat-Toolkit-yellow?logo=hardhat)](https://hardhat.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/RevxChain/upgrade-checker/.github%2Fworkflows%2Ftests.yml)](https://github.com/RevxChain/upgrade-checker/actions)
+[![NPM Version](https://img.shields.io/npm/v/%40revxchain%2Fupgrade-checker?style=flat&color=green)
+](https://www.npmjs.com/package/@revxchain/upgrade-checker?activeTab=readme)
 
 </div>
 
@@ -153,7 +155,22 @@ npx hardhat test --network localhost
 
 ### Package
 
-TBA
+#### Hardhat (npm)
+
+```bash
+npm install @revxchain/upgrade-checker
+```
+
+The package requires `OpenZeppelin` libraries as peer dependencies.
+Install, if it is missing:
+
+```bash
+npm install @openzeppelin/contracts@5.6.x
+```
+
+```bash
+npm install @openzeppelin/contracts-upgradeable@5.6.x
+```
 
 ---
 
