@@ -82,9 +82,9 @@ npm install
 ```
 
 This installs:
-- **Hardhat** - Ethereum development framework
-- **OpenZeppelin Contracts** - Audited smart contract library
-- **Hardhat Plugins** - Testing, upgrades, gas reporting, sizing
+- [**Hardhat**](https://v2.hardhat.org/) - Ethereum development framework
+- [**OpenZeppelin Contracts**](https://github.com/OpenZeppelin/openzeppelin-contracts) - Audited smart contract library
+- [**Hardhat Plugins**](https://v2.hardhat.org/hardhat-runner/plugins/nomicfoundation-hardhat-toolbox) - Testing, upgrades, gas reporting, sizing
 
 #### Step 3: Create environment file (optional)
 
@@ -137,8 +137,22 @@ Edit `.env` with your configuration:
 
 ```env
 # MAINNET FORK TEST
-FORK_RPC_URL=https://eth.llamarpc.com
-FORK_BLOCK_NUMBER=24540000
+FORK_RPC_URL = https://eth.llamarpc.com
+FORK_BLOCK_NUMBER = 24540000
+```
+
+Set mainnet forking enabled in the `hardhat.config.js`:
+
+```
+hardhat: {
+    allowUnlimitedContractSize: false,
+    blockGasLimit: 16777216,
+    forking: {
+        url: process.env.FORK_RPC_URL !== undefined ? process.env.FORK_RPC_URL : "https://eth.llamarpc.com",
+        blockNumber: process.env.FORK_BLOCK_NUMBER !== undefined ? process.env.FORK_BLOCK_NUMBER : 24540000,
+        enabled: true
+    }
+},
 ```
 
 Launch a local fork of the network in the first CLI:
@@ -256,7 +270,10 @@ Manages persistent configuration using ERC7201 namespaced storage.
 - `enableInterfacesCheck(bool enable)` - Toggle validation on/off (access restriction required)
 - `getInterfacesCheckEnabled()` - Returns current validation state
 
-**Storage location:** `0xb3567140b780d0e6eae18a93d996909c6c854e99daead678dce9f5547099f300`
+**ERC7201 Storage location:** `0xb3567140b780d0e6eae18a93d996909c6c854e99daead678dce9f5547099f300`
+
+> [!TIP]
+> The `InterfaceIdsRegistry` stores `interfaceIds` that MUST be supported by the implementation. The implementation returns the `interfaceIds` it supports via `ERC165.supportsInterface`.
 
 > [!WARNING]
 > The storage used for `InterfaceIdsRegistry` MUST always be located in the proxy contract. Calls to the library's setter functions MUST be made in the context of the proxy contract. The logic can be located in the implementation, depending on the proxy pattern.
@@ -270,11 +287,11 @@ Manages persistent configuration using ERC7201 namespaced storage.
 #### TransparentUpgradeChecker
 - `constructor` performs initial validation
 - Detects upgrade calls via `msg.sender == ERC1967Utils.getAdmin()` and `msg.sig == ITransparentUpgradeableProxy.upgradeToAndCall.selector`
-- Provides `_checkOverallBeforeFallback()`, `_checkContractNameBeforeFallback()`, `_checkInterfacesBeforeFallback()`
-- The `*BeforeFallback()` validation function must be added to the `_fallback()` function
+- Provides `_checkOverallBeforeFallback()`, `_checkContractNameBeforeFallback()`, and `_checkInterfacesBeforeFallback()` validation functions
+- The `_check*BeforeFallback()` validation function must be added to the `_fallback()` function
 
 > [!WARNING]
-> The default `TransparentUpgradeChecker` implementation is configured for use with the `OpenZeppelin` implementation of [`TransparentUpgradeableProxy`](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v5.6/contracts/proxy/transparent/TransparentUpgradeableProxy.sol#L62) using [ERC1967](https://eips.ethereum.org/EIPS/eip-1967) and [ITransparentUpgradeableProxy](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v5.6/contracts/proxy/transparent/TransparentUpgradeableProxy.sol#L17) interface. For other implementations, you MUST override the [`_detectUpgradeCall()`](https://github.com/RevxChain/upgrade-checker/blob/main/contracts/transparent/TransparentUpgradeChecker.sol#L34) function and add custom logic for detecting upgrade calls and a desired validation function call.
+> The default `TransparentUpgradeChecker` implementation is configured for use with the `OpenZeppelin` implementation of [`TransparentUpgradeableProxy`](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v5.6/contracts/proxy/transparent/TransparentUpgradeableProxy.sol#L62) using [ERC1967](https://eips.ethereum.org/EIPS/eip-1967) and [ITransparentUpgradeableProxy](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v5.6/contracts/proxy/transparent/TransparentUpgradeableProxy.sol#L17) interface. For other implementations, you MUST override the [`_detectUpgradeCall()`](https://github.com/RevxChain/upgrade-checker/blob/main/contracts/transparent/TransparentUpgradeChecker.sol#L79) function and add custom logic for detecting upgrade calls and a desired validation function call.
 
 #### UUPSUpgradeChecker
 - Combines the checker with the implementation logic (following the `UUPS` pattern)
@@ -308,7 +325,7 @@ contract MyBeacon is UpgradeableBeacon, BeaconUpgradeChecker {
         _checkInterfaces(implementation, InterfaceIdsRegistry.getInterfaceIds());
     }
 
-    Override {upgradeTo} to add upgrade validation
+    // Override {upgradeTo} to add upgrade validation
     function upgradeTo(address newImplementation) public override onlyOwner() {
         // Validation runs here - upgrade fails if checks don't pass
         _checkOverall(newImplementation, InterfaceIdsRegistry.getInterfaceIds());
@@ -348,7 +365,7 @@ contract MyBeaconImplementation is UpgradeCheckerImplementation {
 
     // Override {supportsInterface} to follow default {IERC165} rules
     function supportsInterface(bytes4 interfaceId) public view virtual override returns(bool) {
-        return interfaceId == type(IMyUpgradeable).interfaceId || super.supportsInterface(interfaceId);
+        return interfaceId == type(IMyBeaconImplementation).interfaceId || super.supportsInterface(interfaceId);
     }
 }
 
