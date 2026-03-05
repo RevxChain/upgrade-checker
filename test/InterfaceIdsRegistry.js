@@ -1,20 +1,11 @@
 const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
+const { UpgradeCheckerFixture } = require("./UpgradeCheckerFixture.js");
 const { expect } = require("chai");
-
-async function InterfaceIdsRegistryFixture() {
-    const [admin] = await ethers.getSigners();
-
-    const InterfaceIdsRegistryMock = await ethers.getContractFactory("InterfaceIdsRegistryMock", admin);
-    const registry = await InterfaceIdsRegistryMock.deploy();
-    await registry.waitForDeployment();
-
-    return { admin, registry };
-};
 
 describe("InterfaceIdsRegistry", function () {
     describe("Deploy", function () {
         it("After deploy state", async function () {
-            const { registry } = await loadFixture(InterfaceIdsRegistryFixture);
+            const { registry } = await loadFixture(UpgradeCheckerFixture);
 
             expect(await registry.getInterfacesCheckEnabled()).to.equal(true);
             expect(await registry.getInterfaceIds()).to.eql([]);
@@ -23,7 +14,7 @@ describe("InterfaceIdsRegistry", function () {
 
     describe("enableInterfacesCheck()", function () {
         it("Success", async function () {
-            const { admin, registry } = await loadFixture(InterfaceIdsRegistryFixture);
+            const { admin, registry } = await loadFixture(UpgradeCheckerFixture);
 
             const INTERFACE_IDS_REGISTRY_STORAGE_LOCATION = "0xb3567140b780d0e6eae18a93d996909c6c854e99daead678dce9f5547099f300";
 
@@ -69,7 +60,7 @@ describe("InterfaceIdsRegistry", function () {
 
     describe("setInterfaceId()", function () {
         it("InterfaceIdsRegistry__InvalidInterfaceId", async function () {
-            const { admin, registry } = await loadFixture(InterfaceIdsRegistryFixture);
+            const { admin, registry } = await loadFixture(UpgradeCheckerFixture);
 
             await expect(registry.connect(admin).setInterfaceId(
                 "0xffffffff",
@@ -83,7 +74,7 @@ describe("InterfaceIdsRegistry", function () {
         });
 
         it("Success", async function () {
-            const { admin, registry } = await loadFixture(InterfaceIdsRegistryFixture);
+            const { admin, registry } = await loadFixture(UpgradeCheckerFixture);
 
             expect(await registry.getInterfaceIds()).to.eql([]);
 

@@ -1,8 +1,12 @@
+const { mine } = require("@nomicfoundation/hardhat-network-helpers");
+
 const TransparentModule = require("../ignition/modules/TransparentModule");
 const BeaconModule = require("../ignition/modules/BeaconModule");
 const UUPSModule = require("../ignition/modules/UUPSModule");
 
 async function UpgradeCheckerFixture() {
+    await mine(1);
+
     const [admin, user] = await ethers.getSigners();
 
     const {
@@ -61,12 +65,16 @@ async function UpgradeCheckerFixture() {
         },
     });
 
+    const InterfaceIdsRegistryMock = await ethers.getContractFactory("InterfaceIdsRegistryMock", admin);
+    const registry = await InterfaceIdsRegistryMock.deploy();
+    await registry.waitForDeployment();
+
     return {
         admin, user, implementationForBeacon, beacon, beaconProxy, invalidImplIncorrectName, beaconInvalidImplNoSupportedInterfaces, proxyAdminCheckInterfaces,
         beaconInvalidImplSupportedInterfaces, UUPSUpgradeCheckerExampleImplTwo, UUPS, UUPS_TWO, implementationForTransparent, transparent, proxyAdmin,
         transparentUpgradeCheckerExampleProxy, transparentInvalidImplNoSupportedInterfaces, transparentInvalidImplSupportedInterfaces, initCalldata,
         transparentCheckContract, proxyAdminCheckContract, transparentUpgradeCheckerMockCheckContract, transparentUpgradeCheckerMockCheckInterfaces,
-        transparentCheckInterfaces, UUPSInvalidImplNoSupportedInterfaces, UUPSInvalidImplSupportedInterfaces
+        transparentCheckInterfaces, UUPSInvalidImplNoSupportedInterfaces, UUPSInvalidImplSupportedInterfaces, registry
     };
 };
 
